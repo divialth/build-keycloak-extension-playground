@@ -46,6 +46,8 @@ jobs:
           cache: maven
 
       - uses: s4u/maven-settings-action@v2.4.1
+        with:
+          mirrors: '[{"id": "maven-default-http-blocker", "name": "Dummy mirror to override default blocking mirror that blocks http", "mirrorOf": "dummy", "url": "http://0.0.0.0/"}]'
 
       - name: build keycloak
         run: mvn --batch-mode clean install -DskipTests
