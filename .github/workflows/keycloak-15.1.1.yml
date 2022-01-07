@@ -17,7 +17,10 @@ jobs:
 
     runs-on: ubuntu-latest
     
+    continue-on-error: true
+    
     strategy:
+      fail-fast: false
       matrix:
         # specify the keycloak version to use
         KC_VERSION: [15.1.1, 16.1.0]
@@ -57,7 +60,7 @@ jobs:
       
       - name: build keycloak-extension-playground
         run: |
-          sed -i "s|<keycloak.version>.*</keycloak.version>|<keycloak.version>${{ env.KC_VERSION }}</keycloak.version>|g" pom.xml
+          sed -i "s|<keycloak.version>.*</keycloak.version>|<keycloak.version>${{ matrix.KC_VERSION }}</keycloak.version>|g" pom.xml
           mvn -q --batch-mode clean package
         working-directory: keycloak-extension-playground
 
