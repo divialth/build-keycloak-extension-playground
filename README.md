@@ -1,0 +1,1 @@
+# build-keycloak-extension-playground
