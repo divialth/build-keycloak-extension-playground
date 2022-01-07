@@ -1,27 +1,28 @@
-name: keycloak 15.1.1
+name: keycloak build matrix
 
 on:
   #schedule:
   #  - cron: '11 4 * * 0'
   push:
     branches: [ main ]
-    # Publish semver tags as releases.
-    tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ main ]
 
 env:
-  # specify the keycloak version to use
-  KC_VERSION: 15.1.1
   # spefify the java distribution to use
   JAVA_DIST: adopt
-  # specify the java version to use
-  JAVA_VERSION: 11
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        # specify the keycloak version to use
+        KC_VERSION: [15.1.1, 16.1.0]
+        # specify the java version to use
+        JAVA_VERSION: [11]
 
     steps:
 
@@ -29,7 +30,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: keycloak/keycloak
-          ref: ${{ env.KC_VERSION }}
+          ref: ${{ matrix.KC_VERSION }}
           path: keycloak
 
       - name: repo checkout keycloak-extension-playground
@@ -41,7 +42,7 @@ jobs:
       - name: java setup
         uses: actions/setup-java@v2
         with:
-          java-version: ${{ env.JAVA_VERSION }}
+          java-version: ${{ matrix.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DIST }}
           cache: maven
 
@@ -63,5 +64,5 @@ jobs:
       - name: release files
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ env.KC_VERSION }}
+          tag_name: keycloak-${{ matrix.KC_VERSION }}-${{ env.JAVA_DIST }}-${{ matrix.JAVA_VERSION }}
           files: keycloak-extension-playground/**/target/*.jar
