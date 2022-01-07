@@ -43,13 +43,16 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DIST }}
+          cache: maven
+
+      - uses: s4u/maven-settings-action@v2.4.1
 
       - name: build keycloak
-        run: mvn clean install -DskipTests
+        run: mvn --batch-mode clean install -DskipTests
         working-directory: keycloak
       
       - name: build keycloak-extension-playground
         run: |
           sed -i "s|<keycloak.version>.*</keycloak.version>|<keycloak.version>$KC_VERSION</keycloak.version>|g" pom.xml
-          mvn clean package
+          mvn --batch-mode clean package
         working-directory: keycloak-extension-playground
