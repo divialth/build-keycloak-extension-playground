@@ -1,0 +1,55 @@
+name: keycloak 15.1.1
+
+on:
+  #schedule:
+  #  - cron: '11 4 * * 0'
+  push:
+    branches: [ main ]
+    # Publish semver tags as releases.
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  # specify the keycloak version to use
+  KC_VERSION: 15.1.1
+  # spefify the java distribution to use
+  JAVA_DIST: adopt
+  # specify the java version to use
+  JAVA_VERSION: 11
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: repo checkout keycloak
+        uses: actions/checkout@v2
+        with:
+          repository: keycloak/keycloak
+          ref: {{ env.KC_VERSION }}
+          path: keycloak
+
+      - name: repo checkout keycloak-extension-playground
+        uses: actions/checkout@v2
+        with:
+          repository: thomasdarimont/keycloak-extension-playground
+          path: keycloak-extension-playground
+
+      - name: java setup
+        uses: actions/setup-java@v2
+        with:
+          java-version: {{ env.JAVA_VERSION }}
+          distribution: {{ env.JAVA_DIST }}
+
+      - name: build keycloak
+        run: mvn clean install -DskipTests
+        working-directory: keycloak
+      
+      - name: build keycloak-extension-playground
+        run: |
+          sed -i "s|<keycloak.version>.*</keycloak.version>|<keycloak.version>$KC_VERSION</keycloak.version>|g" pom.xml
+          mvn clean package
+        working-directory: keycloak-extension-playground
