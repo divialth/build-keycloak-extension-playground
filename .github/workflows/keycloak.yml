@@ -70,6 +70,7 @@ jobs:
         run: |
           sed -i "s|<keycloak.version>.*</keycloak.version>|<keycloak.version>${{ matrix.KC_VERSION }}</keycloak.version>|g" pom.xml
           mvn -q --batch-mode clean package
+          rm keycloak-playground-server/target/*.jar
         working-directory: keycloak-extension-playground
 
       - name: release files
