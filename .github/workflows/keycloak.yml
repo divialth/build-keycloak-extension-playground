@@ -23,7 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         # specify the keycloak version to use
-        KC_VERSION: [15.1.1, 16.1.0]
+        KC_VERSION: [15.1.1, 16.1.1, 17.0.0]
         # specify the java version to use
         JAVA_VERSION: [11]
 
